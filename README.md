@@ -194,7 +194,7 @@ You should see in your terminal a message indicating that the server is listenin
 3. Make your first request of ownership sending your wallet address:
     ![Request: http://localhost:8000/requestValidation ](https://github.com/cristhianvs/project_1_v2_boilerplate/blob/master/src/Step2.JPG)
 4. Sign the message with your Wallet:
-    ![Use the Wallet to sign a message](https://github.com/cristhianvs/project_1_v2_boilerplate/blob/master/src/Signing-message-with-Electrum.JPG)
+    ![Use the Wallet to sign a message](https://github.com/cristhianvs/project_1_v2_boilerplate/blob/master/src/Signing%20message%20with%20Electrum.JPG)
 5. Submit your Star
      ![Request: http://localhost:8000/submitstar](https://github.com/cristhianvs/project_1_v2_boilerplate/blob/master/src/Step3.JPG)
 6. Retrieve Stars owned by me
