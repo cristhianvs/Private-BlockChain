@@ -70,7 +70,7 @@ class Blockchain {
                 block.previousBlockHash = self.chain[self.chain.length-1].hash;
             }
             block.hash = SHA256(JSON.stringify(block)).toString();
-            if (await block.validate()){
+            if (await self.validateChain()){
                 self.chain.push(block);
                 self.height++;
                 resolve(block);
