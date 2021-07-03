@@ -199,23 +199,27 @@ class Blockchain {
     /**
      * This method will return a Promise that will resolve with the list of errors when validating the chain.
      * Steps to validate:
-     * 1. You should validate each block using `validateBlock`
+     * 1. You should validate each block u
+     * sing `validateBlock`
      * 2. Each Block should check the with the previousBlockHash
      */
-    validateChain() {
+     validateChain() {
         let self = this;
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
+            const bheightWithError = 0;
             self.chain.forEach(async(b)=>{
-                if (await b.validate()==false){
-                    const bheightWithError = b.height;
+                if (await b.validate()===false){
+                    bheightWithError = b.height;
                     const messageError = `The following block with height ${bheightWithError} has been tampered`;
                     errorLog.push(messageError);
                 }
                 if(b.height>0){   
-                    const previousBlock=self.chain[bheightWithError-1];
-                    if (previousBlock.hash!=b.previousBlockHash){
-                        messageError = `The previous block hash ${bheightWithError-1} doesn't match the current block ${bheightWithError} hash`;
+                    console.log("bheightWithError "+b.height)
+                    const previousBlock=self.chain[b.height-1];
+
+                    if (previousBlock.hash != b.previousBlockHash){
+                        messageError = `The previous block hash ${b.height-1} doesn't match the current block ${bheightWithError} hash`;
                         errorLog.push(messageError); 
                     }
                 }
@@ -223,6 +227,7 @@ class Blockchain {
             resolve(errorLog);
         });
     }
+
 
 }
 
