@@ -70,14 +70,13 @@ class Blockchain {
                 block.previousBlockHash = self.chain[self.chain.length-1].hash;
             }
             block.hash = SHA256(JSON.stringify(block)).toString();
-            self.chain.push(block);
-            self.height++;
-            if (block){
+            if (await block.validate()){
+                self.chain.push(block);
+                self.height++;
                 resolve(block);
             } else {
-                reject(Error("Error happened during execution"));
+                reject(Error("Error happened during execution or Block is tampered"));
             }
-            
         });
     }
 
@@ -121,7 +120,7 @@ class Blockchain {
             let elapsedTime = currentTime - messageTime;
             if (elapsedTime < 300){
                 if (bitcoinMessage.verify(message, address, signature)){
-                    let data = {"ownerAddress":address, "star":star};
+                    let data = {ownerAddress:address, star:star};
                     let block = new BlockClass.Block(data);
                     self._addBlock(block);
                     resolve(block);    
@@ -162,7 +161,8 @@ class Blockchain {
     getBlockByHeight(height) {
         let self = this;
         return new Promise((resolve, reject) => {
-            let block = self.chain.filter(b => b.height === height)[0];
+            //let block = self.chain.filter(b => b.height === height)[0];
+            let block = self.chain.find((b) => b.height === height);
             if(block){
                 resolve(block);
             } else {
@@ -182,7 +182,7 @@ class Blockchain {
         let stars = [];
         return new Promise((resolve, reject) => {
             self.chain.forEach(async(b)=> {        
-                if(b.height>0){                            //avoid assessing Genesis Block
+                if(b.height>0){                            //avoid evaluate Genesis Block
                     let data = await b.getBData();        
                     if(data){
                         if(data.ownerAddress === address){       
@@ -207,12 +207,12 @@ class Blockchain {
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
             self.chain.forEach(async(b)=>{
-                if(b.height>0){
-                    if (b.validate()==false){
-                        const bheightWithError = b.height;
-                        const messageError = `The following block with height ${bheightWithError} has been tampered`;
-                        errorLog.push(messageError);
-                    }
+                if (await b.validate()==false){
+                    const bheightWithError = b.height;
+                    const messageError = `The following block with height ${bheightWithError} has been tampered`;
+                    errorLog.push(messageError);
+                }
+                if(b.height>0){   
                     const previousBlock=self.chain[bheightWithError-1];
                     if (previousBlock.hash!=b.previousBlockHash){
                         messageError = `The previous block hash ${bheightWithError-1} doesn't match the current block ${bheightWithError} hash`;
